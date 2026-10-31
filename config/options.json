@@ -1,0 +1,19 @@
+{
+    "datasets" : {
+        "MSRA" : {
+            "train" : "../../datas/1.demo2实体识别/MSRA/train_5k.txt",
+            "dev" : "../../datas/1.demo2实体识别/MSRA/dev_1k.txt",
+            "test" : "../../datas/1.demo2实体识别/MSRA/test_1k.txt"
+        },
+        "weibo" : {
+            "class" : "../../datas/1.demo2实体识别/weibo/class.txt",
+            "train" : "../../datas/1.demo2实体识别/weibo/train.txt",
+            "dev" : "../../datas/1.demo2实体识别/weibo/dev.txt",
+            "test" : "../../datas/1.demo2实体识别/weibo/test.txt"
+        }
+    },
+    "models" : {
+        "bert-base-chinese" : "../../pretrained_models/bert-base-chinese",
+        "chinese-bert-wwm" : "../../pretrained_models/chinese-bert-wwm"
+    }
+}
