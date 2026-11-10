@@ -84,9 +84,8 @@ if __name__ == "__main__":
     from transformers import AutoTokenizer
     from utils import args_parse
 
-    inputs = ['大连海事大学', '我是曹超森']
 
-    config = args_parse()
+    config, dataset_n, model_n = args_parse()
     data_config = config['data']
     with open(data_config['datasets']['labels2id'], 'r', encoding='utf-8') as f:
         labels2id = json.load(f)

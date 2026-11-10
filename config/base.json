@@ -9,5 +9,13 @@
         "pt_model_path" : "",
         "num_labels" : 0,
         "dropout" : 0.1
+    },
+    "train":{
+        "epochs" : 5,
+        "swanlab_project" : "ner-demo2",
+        "swanlab_workspace" : "iwills"
+    },
+    "exp":{
+        "op_dir" : ""
     }
 }

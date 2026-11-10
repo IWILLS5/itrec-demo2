@@ -31,7 +31,6 @@ def args_parse():
     
     datasets, models = options['datasets'].keys(), options['models'].keys()
     datasets_len, models_len = len(datasets), len(models)
-
     print("数据集列表如下:")
     for i, datasets_n in enumerate(datasets):
         print(f"{i}.{datasets_n}")
@@ -56,10 +55,10 @@ def args_parse():
         print("序号不在范围内!!!")
         model_option = int(input("请选择使用的模型(序号):"))
     for i, model_n in enumerate(models):
-        if i == datasets_option:
+        if i == model_option:
             model = model_n  
     config['model']['pt_model_path'] = options['models'][model]
-    return config
+    return config, dataset, model
 
 
 if __name__ == "__main__":

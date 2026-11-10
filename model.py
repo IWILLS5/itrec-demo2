@@ -33,7 +33,7 @@ class Model(nn.Module):
         return logits
 
 if __name__ == "__main__":
-    config = args_parse()
+    config, dataset_n, model_n = args_parse()
     model = Model(config['model'])
     # print(model.hidden_size)
 
