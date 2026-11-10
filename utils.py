@@ -31,7 +31,7 @@ def args_parse():
     
     datasets, models = options['datasets'].keys(), options['models'].keys()
     datasets_len, models_len = len(datasets), len(models)
-    
+
     print("数据集列表如下:")
     for i, datasets_n in enumerate(datasets):
         print(f"{i}.{datasets_n}")
@@ -43,6 +43,10 @@ def args_parse():
         if i == datasets_option:
             dataset = datasets_n        
     config['data']['datasets'] = options['datasets'][dataset]
+
+    with open(config['data']['datasets']['labels2id'], 'r', encoding='utf-8') as f:
+        labels2id = json.load(f)
+    config['model']['num_labels'] = len(labels2id.keys())
     
     print("模型列表如下:")
     for i, model_n in enumerate(models):
