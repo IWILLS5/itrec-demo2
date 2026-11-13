@@ -8,7 +8,7 @@ from torch.optim.lr_scheduler import LinearLR, CosineAnnealingLR, SequentialLR
 from transformers import AutoTokenizer 
 import swanlab
 
-from utils import args_parse, op_parse
+from utils import args_parse, op_parse, seed_init
 from model import Model
 from datasets import Datasets
 from evaluationMetrics import EvaluationMetrics
@@ -390,6 +390,7 @@ def main():
     config, dataset_n, model_n = args_parse()
     with open(config['data']['datasets']['labels2id'], 'r', encoding='utf-8') as f:
         labels2id = json.load(f)
+    seed_init(config['train']['seed'])
     exp = Experiment(config, labels2id, dataset_n, model_n)
     exp.run()
 
