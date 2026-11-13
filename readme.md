@@ -1,20 +1,56 @@
 # ITREC 新生训练营demo2
-## 🧪 Demo 2：命名实体识别（NER）任务
+该项目基于MSRA和weibo数据集，bert-base-chinese和hfl/chinese-bert-wwm模型, 在原有模型的基础上添加分类头，以完成ner识别的任务。<br>
+具体数据集和demo说明参考仓库：**https://github.com/DMU-ITREC/itrec-nlp-newcomer-guide/tree/main**
+## 项目文件
+- \ datas \ 0.demo1文本分类 \ new_id_convert.json : 新闻id和对应新闻的对应关系，以及新闻id和id的对应关系
+- \ config \ base.json : 模型基础配置文件
+- datasets_clean.py : 数据预处理文件(清洗以及生成new_id_convert.json)
+- datasets.py : 数据集文件
+- environment.yml : conda环境文件
+- evaluationMetrics.py : 模型指标文件
+- model.py : 模型文件
+- train.py : 模型训练文件
+- utils.py : 通用工具文件
 
-### ✅ 任务目标
+## 快速运行
+```项目目录
+├── ITREC
+    ├── datas
+    ├   └── 0.demo1文本分类
+    ├       └── new_id_convert.json
+    └── Demo
+        └── demo2
+            └── config
+            ├   ├   option.json
+            ├   └── base.json
+            ├   datasets_clean.py
+            ├   datasets.py
+            ├   environment.yml
+            ├   evaluationMetrics.py
+            ├   model.py
+            ├   train.py
+            └── utils.py
+```
+运行命令目录(命令均在Demo2路径下):
+```
+cd ~\ITREC\Demo\Demo2
+```
 
-分别使用下面二个bert预训练模型[bert-base-chinese](https://huggingface.co/google-bert/bert-base-chinese)和[chinese-bert-wwm](https://huggingface.co/hfl/chinese-bert-wwm)，完成weibo和msra二个数据集中文实体识别任务，理解序列标注模型的构建逻辑与评估指标。
-
-### 🔧 实现要求
-
-1. 使用 PyTorch 和 Hugging Face 生态，**独立完成以下模块**：
-   * 代码需要同时支持两种bert预训练模型和数据集
-   * 数据加载与预处理（BIO标注格式）
-   * 模型设计与训练流程
-   * 模型评估与结果可视化 
-3. 使用 [SwanLab](https://www.swanlab.cn/) 等工具进行训练过程与结果的可视化。
-4. 使用**微博实体识别数据集和MSRA实体识别数据集**，详见网盘数据集中的demo2实体识别，[微博数据来源参考](https://aclanthology.org/D15-1064.pdf)、[MSRA数据来源参考](https://tianchi.aliyun.com/dataset/144307)。
-
-### 📊 实验汇报要求
-
-* 参数调优对实体识别性能的变化趋势
+## 数据集处理
+在终端输入
+```powershell
+python clean.py
+``` 
+输入1，
+结果如下：<br>
+![alt text](md_images/image-1.png)
+可以看到在weibo的数据集的train.txt和test.txt文件中的实体BIO标签出现错误，且排查后发现错误都是`实体以I-xxx起始，而不是B-xxx`，如下图所示：
+![alt text](md_images/image-2.png)
+![alt text](md_images/image-3.png)
+接下来继续终端输入
+```powershell
+python clean.py
+``` 
+输入2，
+结果如下：<br>
+![alt text](md_images/image-4.png)

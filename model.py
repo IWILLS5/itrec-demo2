@@ -53,3 +53,4 @@ if __name__ == "__main__":
     output = model(tokens['input_ids'], tokens['token_type_ids'], tokens['attention_mask'])
 
     print(output)
+    print(model)

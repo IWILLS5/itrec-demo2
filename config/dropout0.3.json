@@ -1,0 +1,29 @@
+{
+    "data" : {
+        "datasets" : "",
+        "batch_size" : 32,
+        "num_workers" : 4,
+        "max_len" : 512,
+        "ignore_index" : -100
+    },
+    "model":{
+        "pt_model_path" : "",
+        "num_labels" : 0,
+        "dropout" : 0.3
+    },
+    "train":{
+        "epochs" : 5,
+        "ES_patience" : 3,
+        "warmup_ration" : 0.1,
+        "adamW_bert_lr" : 2e-5,
+        "adamW_classifier_lr" : 1e-3,
+        "adamW_weight_decay": 0.01,
+        "adamW_eps" : 1e-8,
+        "seed" : 5,
+        "swanlab_project" : "ner-demo2",
+        "swanlab_workspace" : "iwills"
+    },
+    "exp":{
+        "op_dir" : "../../outputs/demo2"
+    }
+}
