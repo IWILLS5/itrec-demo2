@@ -2,15 +2,22 @@
 该项目基于MSRA和weibo数据集，bert-base-chinese和hfl/chinese-bert-wwm模型, 在原有模型的基础上添加分类头，以完成ner识别的任务。<br>
 具体数据集和demo说明参考仓库：**https://github.com/DMU-ITREC/itrec-nlp-newcomer-guide/tree/main**
 ## 项目文件
-- \ datas \ 0.demo1文本分类 \ new_id_convert.json : 新闻id和对应新闻的对应关系，以及新闻id和id的对应关系
+- \ datas \ .demo2实体识别 \ MSRA \ labels2id.json : 标签和id的转换
+- \ datas \ 1.demo2实体识别 \ weibo \ labels2id.json : 标签和id的转换
 - \ config \ base.json : 模型基础配置文件
-- datasets_clean.py : 数据预处理文件(清洗以及生成new_id_convert.json)
+- \ config \ options.json : 模型数据集和模型配置文件
+- clean.py : 数据预处理文件（查看是否有违规BIO标签）
 - datasets.py : 数据集文件
 - environment.yml : conda环境文件
-- evaluationMetrics.py : 模型指标文件
+- evaluationMetrics.py : 模型指标文件（实体级 Micro P/R/F1）
+- init.py : 初始化，下载模型相关文件、统计数据集BIO标签类别以及数量
 - model.py : 模型文件
 - train.py : 模型训练文件
 - utils.py : 通用工具文件
+
+## 环境
+项目环境参考文件：environment.yml
+主要运行环境：pytorch、transformers、swanlab
 
 ## 快速运行
 ```
@@ -23,7 +30,7 @@
     ├    └── demo2
     ├       ├── config
     ├       ├   ├   ......
-    ├       ├   ├   option.json
+    ├       ├   ├── options.json
     ├       ├   └── base.json
     ├       ├── clean.py
     ├       ├── datasets.py
@@ -39,7 +46,7 @@
 ```
 运行命令目录(命令均在Demo2路径下):
 ```
-cd ~\ITREC\Demo\Demo2
+cd ~\ITREC\Demo\demo2
 ```
 ### 1.项目初始化
 初始化之前，需要保持以上的项目目录。<br>
@@ -47,13 +54,14 @@ cd ~\ITREC\Demo\Demo2
 ```powershell
 python init.py
 ``` 
-`*如果超时或者下载较慢，可以提前输入`
-```powershell
-export HF_ENDPOINT=https://hf-mirror.com
-```
-1.自动下载模型配置文件<br>
+`*如果超时或者下载较慢，可以提前输入`<br>
+
+bash : **export HF_ENDPOINT=https://hf-mirror.com**<br>
+powershell : **$env:HF_ENDPOINT="https://hf-mirror.com"**
+
+1.下载模型权重与 tokenizer 并保存到 ../../pretrained_models<br>
 2.获取并打印两个数据集的BIO情况<br>
-3.保存两个数据集的class.txt、labels2id.json和labels.json 并 更新options.json文件更新完成
+3.保存两个数据集的class.txt、labels2id.json和labels.json 并 更新options.json文件
 ### 2.数据集处理
 在终端输入
 ```powershell
@@ -61,17 +69,18 @@ python clean.py
 ``` 
 输入1，
 结果如下：<br>
-![alt text](md_images/image-1.png)
+![alt 数据集的 BIO 错误行号](md_images/image-1.png)
 可以看到在weibo的数据集的train.txt和test.txt文件中的实体BIO标签出现错误，且排查后发现错误都是`实体以I-xxx起始，而不是B-xxx`，如下图所示：
-![alt text](md_images/image-2.png)
-![alt text](md_images/image-3.png)
+![alt 数据集的 BIO 错误行号](md_images/image-2.png)
+![alt 数据集的 BIO 错误行号](md_images/image-3.png)
 接下来继续终端输入
-```powershell
+```
 python clean.py
 ``` 
 输入2，
 结果如下：<br>
-![alt text](md_images/image-4.png)
+![alt 数据集的 BIO 错误行号](md_images/image-4.png)
+### `clean 之后重跑 python init.py 刷新`
 
 ### 3.swanlab登录
 ```powershell
@@ -93,7 +102,7 @@ swanlab login
     },
 ```
 ### 4.运行train.py文件
-在终端运行该文件的时候, 根据需要声明自己创建的config文件（configs目录中，默认路径在utils.py中声明）<br>
+在终端运行该文件的时候, 根据需要声明自己创建的config文件（configs目录，默认路径在utils.py中声明）<br>
 `*数据集和模型名称必须声明`<br>
 可以先-h查看可选数据集和模型
 ```powershell
@@ -114,7 +123,7 @@ options:
 #使用默认base.json
 python train.py --dataset MSRA --model bert-base-chinese
 #使用自定义
-python train.py --config .\Demo\demo1\configs\example.json --dataset MSRA --model bert-base-chinese
+python train.py --config .\config\epoch10_ES5.json --dataset MSRA --model bert-base-chinese
 ```
 ## labels2id
 ### MSRA
@@ -247,3 +256,43 @@ labels.json
     }
 }
 ```
+## 不同超参数下的指标对比
+在swanlab上的训练数据展示url:https://swanlab.cn/@iwills/ner-demo2/v1/ps4l3k/overview
+### MSRA
+| 序号 | 训练 | epochs | EarlyStopping | warmup—ratio | batch | dropout | bert-base-lr | classifier-lr |  dev_entity_f1 | Test Token Loss | test_entity_f1 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 1 | bbc-normal | 5 | 3 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.9077 | 0.0516 | **0.8877** |
+| 2 | bbc-batch64-lr | 5 | 3 | 0.1 | 64 | 0.1 | $4 * 10^{-5}$ | $2 * 10^{-3}$ | 0.9099 | 0.0488 | **0.8940** |
+| 3 | bbc-bblr5_6 | 5 | 3 | 0.1 | 32 | 0.1 | $5 * 10^{-6}$ | $1 * 10^{-3}$ | 0.8695 | 0.0496 | **0.8562** |
+| 4 | bbc-dropout0.3 | 5 | 3 | 0.1 | 32 | 0.3 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.9160 | 0.0511 | **0.8931** |
+| 5 | bbc-epoch10_ES5 | 10 | 5 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.9197 | 0.0629 | **0.9074** |
+| 6 | hbw-normal | 5 | 3 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.9115 | 0.0484 | **0.8995** |
+| 7 | hbw-batch64-lr | 5 | 3 | 0.1 | 64 | 0.1 | $4 * 10^{-5}$ | $2 * 10^{-3}$ | 0.9222 | 0.0470 | **0.9034** |
+| 8 | hbw-bblr5_6 | 5 | 3 | 0.1 | 32 | 0.1 | $5 * 10^{-6}$ | $1 * 10^{-3}$ | 0.8734 | 0.0512 | **0.8601** |
+| 9 | hbw-dropout0.3 | 5 | 3 | 0.1 | 32 | 0.3 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.9190 | 0.0472 | **0.9086** |
+| 10 | hbw-epoch10_ES5 | 10 | 5 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.9294 | 0.0569 | **0.9069** |
+
+- bbc-normal(1)和bbc-batch64-lr(2)以及hbw-normal(6)和hbw-batch64-lr(7),都是同等比例的增加batch-size和增大lr，训练得到的entity-f1的结果大致相同，但batch64-lr得到的结果略高一些
+- bbc-bblr5_6(3)和hbw-bblr5_6(8)因为bert-base的lr略小，模型在梯度下降的时候，对于参数的调整较小，使得模型的拟合速度略小于其他参数下的模型
+- bbc-dropout0.3(4)和hbwdropout0.3(9)的dropout均大于normal，模型在dropout为0.3时的收敛效果大于0.1，模型的效果略优
+- bbc-epoch10_ES5(5)和hbw-epoch10_ES5(10)的epochs更大，且适当的调高了early stopping，可以观察到拟合效果更优，entity-f1的值略微提高。且查看bbc和hbw的normal的训练图像，可以看到两个模型的训练结果都在提高，所以当epochs为5的时候，模型还未完全收敛
+
+### weibo
+| 序号 | 训练 | epochs | EarlyStopping | warmup—ratio | batch | dropout | bert-base-lr | classifier-lr |  dev_entity_f1 | Test Token Loss | test_entity_f1 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 1 | bbc-normal | 5 | 3 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.6710 | 0.1265 | **0.6075** |
+| 2 | bbc-batch64-lr | 5 | 3 | 0.1 | 64 | 0.1 | $4 * 10^{-5}$ | $2 * 10^{-3}$ | 0.6641 | 0.1266 | **0.6075** |
+| 3 | bbc-bblr5_6 | 5 | 3 | 0.1 | 32 | 0.1 | $5 * 10^{-6}$ | $1 * 10^{-3}$ | 0.5846 | 0.1602 | **0.4562** |
+| 4 | bbc-dropout0.3 | 5 | 3 | 0.1 | 32 | 0.3 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.6871 | 0.1223 | **0.6557** |
+| 5 | bbc-epoch10_ES5 | 10 | 5 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.7155 | 0.1247 | **0.6794** |
+| 6 | hbw-normal | 5 | 3 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.6896 | 0.1347 | **0.6050** |
+| 7 | hbw-batch64-lr | 5 | 3 | 0.1 | 64 | 0.1 | $4 * 10^{-5}$ | $2 * 10^{-3}$ | 0.6835 | 0.1155 | **0.6428** |
+| 8 | hbw-bblr5_6 | 5 | 3 | 0.1 | 32 | 0.1 | $5 * 10^{-6}$ | $1 * 10^{-3}$ | 0.5921 | 0.1643 | **0.4735** |
+| 9 | hbw-dropout0.3 | 5 | 3 | 0.1 | 32 | 0.3 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.6868 | 0.1162 | **0.6505** |
+| 10 | hbw-epoch10_ES5 | 10 | 5 | 0.1 | 32 | 0.1 | $2 * 10^{-5}$ | $1 * 10^{-3}$ | 0.7107 | 0.1209 | **0.6659** |
+- `相比于MSRA，weibo数据集的train、dev和test的语料均小于MSRA的语料，所以模型的拟合效果略差`
+
+- bbc-normal(1)和bbc-batch64-lr(2)以及hbw-normal(6)和hbw-batch64-lr(7),与MSRA得出的结果相似，都是同等比例的增加batch-size和增大lr，训练得到的entity-f1的结果大致相同。但bbc的batch64-lr得到的结果相似，hbw的batch64-lr结果略优
+- bbc-bblr5_6(3)和hbw-bblr5_6(8)，与MSRA得到的结果相似，因为bert-base的lr略小，模型在梯度下降的时候，对于参数的调整较小，使得模型的拟合速度略小于其他参数下的模型
+- bbc-dropout0.3(4)和hbwdropout0.3(9)的dropout均大于normal，模型在dropout为0.3时的收敛效果大于0.1，模型的效果略优
+- bbc-epoch10_ES5(5)和hbw-epoch10_ES5(10)的epochs更大，且适当的调高了early stopping，可以观察到拟合效果更优，entity-f1的值略微提高。且查看bbc和hbw的normal的训练图像，可以看到两个模型的训练结果都在提高，所以当epochs为5的时候，模型还未完全收敛
