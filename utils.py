@@ -1,5 +1,6 @@
 import json
 import argparse
+from types import SimpleNamespace
 
 import torch
 
@@ -12,6 +13,16 @@ def load_option():
     #导入option
     with open(options_path, 'r', encoding="utf-8") as f:
         return json.load(f)
+
+
+def to_ns(context):
+    #如果是dict，创建simplenamespace对象
+    if isinstance(context, dict):
+        return SimpleNamespace(**{k: to_ns(v)  for k, v in context.items()})
+    #遍历list(tuple/set/datetime 不可能从 JSON 里来)，检测内部是否是dict
+    if isinstance(context, list):
+        return [to_ns(ctx) for ctx in context]
+    return context
 
 
 def args_parse():
@@ -47,7 +58,7 @@ def args_parse():
     with open(config['data']['datasets']['labels2id'], 'r', encoding='utf-8') as f:
         config['model']['num_labels'] = len(json.load(f))
     
-    return config, dataset, model
+    return to_ns(config), dataset, model
 
 
 def fmt(x):
@@ -67,11 +78,11 @@ def op_parse(output_folder, config, dataset_n, model_n):
     parts = [
         str(dataset_n),
         str(model_n),
-        str(config['train']['epochs']), 
-        str(config['data']['batch_size']),
-        str(config['model']['dropout']),
-        fmt(config['train']['adamW_bert_lr']),
-        fmt(config['train']['adamW_classifier_lr'])
+        str(config.train.epochs), 
+        str(config.data.batch_size),
+        str(config.model.dropout),
+        fmt(config.train.adamW_bert_lr),
+        fmt(config.train.adamW_classifier_lr)
     ]
 
     return output_folder/ '_'.join(parts)
@@ -83,4 +94,5 @@ def seed_init(seed):
 
 
 if __name__ == "__main__":
-    print(args_parse())
+    config, dataset, model = args_parse()
+    print(config)

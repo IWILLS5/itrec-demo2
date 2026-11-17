@@ -5,9 +5,9 @@ class Model(nn.Module):
     def __init__(self, config):
         super().__init__()
 
-        pt_model_path = config['pt_model_path']
-        num_labels = config['num_labels']
-        dropout = config['dropout']
+        pt_model_path = config.pt_model_path
+        num_labels = config.num_labels
+        dropout = config.dropout
 
         self.pre_trained_model = AutoModel.from_pretrained(
             pretrained_model_name_or_path = pt_model_path, add_pooling_layer = False
@@ -33,11 +33,11 @@ if __name__ == "__main__":
     from utils import args_parse
 
     config, dataset_n, model_n = args_parse()
-    model = Model(config['model'])
+    model = Model(config.model)
     # print(model.hidden_size)
 
     from transformers import AutoTokenizer
-    tokenizer = AutoTokenizer.from_pretrained(config['model']['pt_model_path'])
+    tokenizer = AutoTokenizer.from_pretrained(config.model.pt_model_path)
     
     inputs = ['大连海事大学', '我是曹超森']
     tokens = tokenizer(

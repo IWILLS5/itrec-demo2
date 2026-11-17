@@ -87,26 +87,26 @@ if __name__ == "__main__":
     from evaluationMetrics import EvaluationMetrics
 
     config, dataset_n, model_n = args_parse()
-    data_config = config['data']
-    with open(data_config['datasets']['labels2id'], 'r', encoding='utf-8') as f:
+    data_config = config.data
+    with open(data_config.datasets.labels2id, 'r', encoding='utf-8') as f:
         labels2id = json.load(f)
-    tokenizer = AutoTokenizer.from_pretrained(config['model']['pt_model_path'])
+    tokenizer = AutoTokenizer.from_pretrained(config.model.pt_model_path)
     
 
-    dev_datas = Datasets(data_config['datasets']['dev'], tokenizer, labels2id, data_config["ignore_index"])
+    dev_datas = Datasets(data_config.datasets.dev, tokenizer, labels2id, data_config.ignore_index)
     #dataloader的参数
-    batch_size = data_config['batch_size']
+    batch_size = data_config.batch_size
     shuffle = True
-    num_workers = data_config['num_workers']
+    num_workers = data_config.num_workers
     pin_memory = True if torch.cuda.is_available() else False
     dataloader = dev_datas.get_dataLoader(batch_size, shuffle, num_workers, pin_memory)
     #模型配置
     device = "cuda" if torch.cuda.is_available() else 'cpu'
-    model = Model(config['model']).to(device)
-    criterion = torch.nn.CrossEntropyLoss(ignore_index=data_config['ignore_index'])
+    model = Model(config.model).to(device)
+    criterion = torch.nn.CrossEntropyLoss(ignore_index=data_config.ignore_index)
     optimizer = torch.optim.AdamW([
-        {'params':model.pre_trained_model.parameters(), 'lr':config['train']['adamW_bert_lr']},
-        {'params':model.nerClassifier.parameters(), 'lr':config['train']['adamW_classifier_lr']}
+        {'params':model.pre_trained_model.parameters(), 'lr':config.train.adamW_bert_lr},
+        {'params':model.nerClassifier.parameters(), 'lr':config.train.adamW_classifier_lr}
     ], weight_decay=0.01, eps=1e-8)
 
 
@@ -142,7 +142,7 @@ if __name__ == "__main__":
         # valid_mask = labels_id_res != -100
         for i, label_id in enumerate(labels_id):
             print(f"-----------------------------{i}-----------------------------")
-            valid_mask = label_id != data_config['ignore_index']
+            valid_mask = label_id != data_config.ignore_index
             print(f"{label_id[valid_mask].tolist() = }")
             print(f"{output[i].argmax(dim=-1)[valid_mask].tolist() = }")
         # print(f"{output_res.argmax(-1) = }")

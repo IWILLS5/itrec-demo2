@@ -83,5 +83,5 @@ def check(config):
 if __name__ == "__main__":
     options_path = './config/options.json'
     with open(options_path, 'r', encoding='utf-8') as f:
-        config = json.load(f)
-    check(config["datasets"])
+        options = json.load(f)
+    check(options["datasets"])
