@@ -55,12 +55,16 @@ class Datasets(Dataset):
             wrod_id = tokens.word_ids(batch_index = i)
             #将None转化为-100和将label下标转化为id
             label_id = []
-            
-            for id in wrod_id:
-                if id is None:
+            prev_idx = None#检查是否和上一个词是一个下标
+
+            for idx in wrod_id:
+                if idx is None:
                     label_id.append(self.ignore_index)
-                else:
+                elif idx != prev_idx:
                     label_id.append(label[id])
+                else:
+                    label_id.append(self.ignore_index)
+                prev_idx = idx
             labels_id.append(label_id)
 
         labels_id = torch.tensor(labels_id, dtype=torch.long)

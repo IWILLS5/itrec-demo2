@@ -1,19 +1,6 @@
 # ITREC 新生训练营demo2
 该项目基于MSRA和weibo数据集，bert-base-chinese和hfl/chinese-bert-wwm模型, 在原有模型的基础上添加分类头，以完成ner识别的任务。<br>
 具体数据集和demo说明参考仓库：**https://github.com/DMU-ITREC/itrec-nlp-newcomer-guide/tree/main**
-## 项目文件
-- \ datas \ .demo2实体识别 \ MSRA \ labels2id.json : 标签和id的转换
-- \ datas \ 1.demo2实体识别 \ weibo \ labels2id.json : 标签和id的转换
-- \ config \ base.json : 模型基础配置文件
-- \ config \ options.json : 模型数据集和模型配置文件
-- clean.py : 数据预处理文件（查看是否有违规BIO标签）
-- datasets.py : 数据集文件
-- environment.yml : conda环境文件
-- evaluationMetrics.py : 模型指标文件（实体级 Micro P/R/F1）
-- init.py : 初始化，下载模型相关文件、统计数据集BIO标签类别以及数量
-- model.py : 模型文件
-- train.py : 模型训练文件
-- utils.py : 通用工具文件
 
 ## 环境
 项目环境参考文件：environment.yml
@@ -24,25 +11,27 @@
 ├── ITREC
     ├── datas
     ├   └── 1.demo2实体识别
-    ├       ├   MSRA
+    ├       ├── MSRA
+    ├       ├   └── labels2id.json 标签和id的转换
     ├       └── weibo
+    ├           └── labels2id.json 标签和id的转换
     ├── Demo
     ├    └── demo2
-    ├       ├── config
+    ├       ├── config 
     ├       ├   ├   ......
-    ├       ├   ├── options.json
-    ├       ├   └── base.json
-    ├       ├── clean.py
-    ├       ├── datasets.py
-    ├       ├── environment.yml
-    ├       ├── evaluationMetrics.py
-    ├       ├── init.py
-    ├       ├── model.py
-    ├       ├── train.py
-    ├       └── utils.py
-    ├── outputs
-    ├    └── demo2
-    ├── pretrained_models
+    ├       ├   ├── options.json 模型数据集和模型配置文件
+    ├       ├   └── base.json 模型基础配置文件
+    ├       ├── clean.py 数据预处理文件（查看是否有违规BIO标签）
+    ├       ├── datasets.py 数据集文件
+    ├       ├── environment.yml conda环境文件
+    ├       ├── evaluationMetrics.py 模型指标文件（实体级 Micro P/R/F1）
+    ├       ├── init.py 初始化，下载模型相关文件、统计数据集BIO标签类别以及数量
+    ├       ├── model.py 模型文件
+    ├       ├── train.py 模型训练文件
+    ├       └── utils.py 通用工具文件
+    ├── outputs 输出总文件夹
+    ├    └── demo2 demo2模型文件输出文件夹
+    ├── pretrained_models 预训练模型权重文件夹
 ```
 运行命令目录(命令均在Demo2路径下):
 ```
